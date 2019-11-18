@@ -49,12 +49,12 @@ defmodule Project41.LoginEngine do
   import Ecto.Query
 
   # Functions to Register Users
-  def registerUser(username, name, password) do
-    userID = Ecto.UUID.generate()
-    newUser = %Project41.Userdata{userid: userID, username: username, name: name, password: password}
+  def registerUser(username, password) do
+    newUser = %Project41.Userdata{userid: Ecto.UUID.generate(), username: username, password: password}
     if(!username_exist(username)) do
       Project41.Repo.insert(newUser)
     else
+      IO.inspect "Username already exists, trying to login instead."
       login(username, password)
     end
   end
