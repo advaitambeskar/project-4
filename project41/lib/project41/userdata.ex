@@ -12,7 +12,6 @@ defmodule Project41.Userdata do
   schema "user_database" do
     field :username, :string
     field :password, :string
-    field :name, :string
     field :tweets, {:array, :string}
     field :mentions, {:array, :string}
     field :followers, {:array, :binary_id}
