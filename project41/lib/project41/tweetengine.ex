@@ -50,7 +50,7 @@ defmodule Project41.LoginEngine do
 
   # Functions to Register Users
   def registerUser(username, password) do
-    newUser = %Project41.Userdata{userid: Ecto.UUID.generate(), username: username, password: password, tweets: [], mentions: [], }
+    newUser = %Project41.Userdata{userid: Ecto.UUID.generate(), username: username, password: password}
     if(!username_exist(username)) do
       Project41.Repo.insert(newUser)
     else

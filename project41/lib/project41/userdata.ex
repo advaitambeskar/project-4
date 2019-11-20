@@ -12,10 +12,6 @@ defmodule Project41.Userdata do
   schema "user_database" do
     field :username, :string
     field :password, :string
-    field :tweets, {:array, :string}
-    field :mentions, {:array, :string}
-    field :followers, {:array, :binary_id}
-    field :feed, {:array, :string}
   end
   #
   # In the perfect world, the userdata and tweets should be held on different databases. However,
@@ -32,6 +28,55 @@ defmodule Project41.Topic do
   schema "topic_database" do
     field :hashtags, :string
     field :userids, {:map, :binary_id}
-    field :tweets, {:map, :string}
+    field :tweet, {:map, :string}
+  end
+end
+
+defmodule Project41.Tweetdata do
+  use Ecto.Schema
+
+  #
+  # create table(:tweet_database, primary_key: false) do
+  #   add :tweetid, :uuid, primary_key: true
+  #   add :tweet, :string
+  #   add :owner, :uuid
+  #   add :hashtags, :map
+  #   add :mentions, :map
+  #
+
+  @primary_key {:tweetid, :binary_id, autogenerate: true}
+  schema "tweet_database" do
+    field :tweet, :string
+    field :owner, :binary_id
+    field :hashtags, {:map, :string}
+    field :mentions, {:map, :binary_id}
+  end
+end
+
+defmodule Project41.Follower do
+  use Ecto.Schema
+    #
+    # create table(:follower_database) do
+    #   add :userid, :uuid
+    #   add :followers, :map
+    # end
+    #
+    schema "follower_database" do
+      field :userid, :binary_id
+      field :followers, {:map, :binary_id}
+    end
+end
+
+defmodule Project41.Feed do
+  use Ecto.Schema
+  #
+  # create table(:feed_database) do
+  #   add :userid, :uuid
+  #   add :tweets, :map
+  # end
+  #
+  schema "feed_database" do
+    field :userid, :binary_id
+    field :tweets, {:map, :binary_id}
   end
 end

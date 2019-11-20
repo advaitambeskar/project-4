@@ -6,7 +6,7 @@ defmodule Project41.Repo.Migrations.TopicDatabase do
       add :hashid, :uuid, primary_key: true
       add :hashtags, :string
       add :userids, :map
-      add :tweets, :map
+      add :tweet, :map
     end
   end
 end

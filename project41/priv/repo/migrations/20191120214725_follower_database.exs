@@ -5,5 +5,6 @@ defmodule Project41.Repo.Migrations.FollowerDatabase do
     create table(:follower_database) do
       add :userid, :uuid
       add :followers, :map
+    end
   end
 end

@@ -12,7 +12,4 @@ defmodule Project41 do
       :world
 
   """
-  def hello do
-    :world
-  end
 end
