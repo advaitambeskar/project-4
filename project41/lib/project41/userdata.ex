@@ -63,7 +63,7 @@ defmodule Project41.Follower do
     #
     schema "follower_database" do
       field :userid, :binary_id
-      field :followers, {:map, :binary_id}
+      field :followers, {:array, :binary_id}
     end
 end
 

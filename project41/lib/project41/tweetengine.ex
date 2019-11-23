@@ -4,13 +4,13 @@ defmodule Project41.TweetEngine do
   # stuff
   # When login occurs, a new process is created and the userid is associated with that login. Each process maintains a 'cookie' of sorts
   # that allows the user to log-off
-  def init(userid, tweetids, mentionedids) do
-  {:ok, {userid, tweetids, mentionedids}}
+  def init(userid, tweets, mentions, followers, feed) do
+  {:ok, {userid, tweets, mentions, followers, feed}}
   end
 
 
-  def start(userid, tweetids, mentionedids) do
-    state = {userid, tweetids, mentionedids}
+  def start(userid, tweets, mentions, followers, feed) do
+    state = {userid, tweets, mentions, followers, feed}
     {:ok, pid} = GenServer.start(__MODULE__, state)
     {pid, state}
   end
@@ -48,15 +48,33 @@ end
 defmodule Project41.LoginEngine do
   import Ecto.Query
 
-  # Functions to Register Users
+  @doc """
+    Returns: {:atom, {username, password}}
+    The function accepts username and password and attempts to register the user, if the user is not
+    currently in the list of already logged in users, then it will register a new user and log them in
+    If the user is already present, then it will print the message
+    The function returns the username and password that will be used to login.
+
+    """
   def registerUser(username, password) do
+
     newUser = %Project41.Userdata{userid: Ecto.UUID.generate(), username: username, password: password}
+    #create the userid that has been generated to
+    userid = newUser.userid
+    IO.inspect userid
     if(!username_exist(username)) do
       Project41.Repo.insert(newUser)
+      #topicEntry
+      followerEntry = %Project41.Follower{userid: userid, followers: []}
+      Project41.Repo.insert!(followerEntry)
+      #feedDatabase
+
+      #create a process here with the created new user.
     else
       IO.inspect "Username already exists, trying to login instead."
-      login(username, password)
     end
+
+    {:login, {username, password}}
   end
 
   def username_exist(username) do
@@ -71,19 +89,74 @@ defmodule Project41.LoginEngine do
 
   def login(username, password) do
     query = from(user in Project41.Userdata, select: user.password, where: user.username==^username)
-    [retrieved_password] = query |> Project41.Repo.all
+    retrieved_password = query |> Project41.Repo.all
     IO.inspect(retrieved_password)
-    if(retrieved_password == password) do
+    if(retrieved_password == [password]) do
       query_userid = from(user in Project41.Userdata, select: user.userid, where: user.username==^username)
       retrieved_userid = query_userid |> Project41.Repo.all
-      {retrieved_userid, :loginSuccessful}
+      {:loginSuccessful, retrieved_userid}
     else
-      {username, :loginUnsucessful}
+      {:loginUnsucessful, username}
     end
+  end
+
+  def isLogin?(username) do
+    # This function needs to be changed when genserver processes are created and such
+    # before any function occurs, check if the login is true from the centralized table maintining
+    # record of all the logged in users.
+    if(true) do
+      true
+    end
+    query = from(user in Project41.Userdata, select: user.userid, where: user.username==^username)
+    [retrieved_userid] = query |> Project41.Repo.all
+
   end
 
   # Functions to Delete Users - delete occurs only if the user is currently logged in
 
 
   # Functions to
+end
+
+defmodule Project41.TweetFacility do
+
+
+  def tweetFormat(tweet) do
+    split_tweet = String.split(tweet, " ");
+    hashtag = Enum.map(split_tweet, fn x ->
+      l = String.length(x);
+      if(String.starts_with?(x, "#")) do
+        String.slice(x, 1..l)
+      end
+    end)
+    hashtag = Enum.filter(hashtag, fn x ->
+      x != nil
+    end)
+
+    mention = Enum.map(split_tweet, fn x ->
+      l = String.length(x);
+      if(String.starts_with?(x, "@")) do
+        String.slice(x, 1..l)
+      end
+    end)
+    mention = Enum.filter(mention, fn x->
+      x != nil
+    end)
+
+    [tweet, hashtag, mention]
+  end
+
+  def addTweetToDB(userid, tweet) do
+    #
+    # schema "tweet_database" do
+    #   field :tweet, :string
+    #   field :owner, :binary_id
+    #   field :hashtags, {:map, :string}
+    #   field :mentions, {:map, :binary_id}
+    # end
+    #
+    [tweet, hashtag, mention] = Project41.TweetFacility.tweetFormat(tweet)
+    # query = from(user in Project41.Userdata, select: user.password, where: user.username==^username)
+    # newTweet = %Project41.Tweetdata.
+  end
 end
