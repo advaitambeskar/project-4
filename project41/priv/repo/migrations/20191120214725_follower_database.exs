@@ -3,8 +3,8 @@ defmodule Project41.Repo.Migrations.FollowerDatabase do
 
   def change do
     create table(:follower_database) do
-      add :userid, :uuid
-      add :followers, :map
+      add :userid, :binary_id
+      add :followers, {:array, :binary_id}, default: []
     end
   end
 end

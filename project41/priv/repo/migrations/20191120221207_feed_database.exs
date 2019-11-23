@@ -4,7 +4,7 @@ defmodule Project41.Repo.Migrations.FeedDatabase do
   def change do
     create table(:feed_database) do
       add :userid, :uuid
-      add :tweets, :map
+      add :tweets, {:array, :string}, default: []
     end
   end
 end
