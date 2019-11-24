@@ -6,8 +6,8 @@ defmodule Project41.Repo.Migrations.TweetDatabase do
       add :tweetid, :uuid, primary_key: true
       add :tweet, :string
       add :owner, :uuid
-      add :hashtags, :map
-      add :mentions, :map
+      add :hashtags, {:array, :binary_id}, default: []
+      add :mentions, {:array, :binary_id}, default: []
     end
   end
 end

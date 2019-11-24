@@ -27,8 +27,8 @@ defmodule Project41.Topic do
   @primary_key {:hashid, :binary_id, autogenerate: true}
   schema "topic_database" do
     field :hashtags, :string
-    field :userids, {:map, :binary_id}
-    field :tweet, {:map, :string}
+    field :userids, {:array, :binary_id}
+    field :tweet, {:array, :binary_id}
   end
 end
 
@@ -48,8 +48,8 @@ defmodule Project41.Tweetdata do
   schema "tweet_database" do
     field :tweet, :string
     field :owner, :binary_id
-    field :hashtags, {:map, :string}
-    field :mentions, {:map, :binary_id}
+    field :hashtags, {:array, :string}
+    field :mentions, {:array, :binary_id}
   end
 end
 
