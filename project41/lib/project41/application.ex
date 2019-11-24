@@ -12,7 +12,8 @@ defmodule Project41.Application do
       Project41.Repo,
       # Project41.TweetEngine
     ]
-
+    response = Project41.LiveUserServer.start_link()
+#   Project41.LiveUserServer.userLogedIn(self(),456)
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Project41.Supervisor]

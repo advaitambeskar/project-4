@@ -12,6 +12,7 @@ defmodule Project41.Client do
         feed = [] # extract feed
         # Project41.Feed
         {pid, client_state} = Project41.TweetEngine.start(userid, tweets, mentions, followers, feed)
+        Project41.LiveUserServer.userLogedIn(pid, userid)
         client_state
       end
     end

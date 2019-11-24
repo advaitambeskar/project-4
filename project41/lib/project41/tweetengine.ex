@@ -8,7 +8,6 @@ defmodule Project41.TweetEngine do
   {:ok, {userid, tweets, mentions, followers, feed}}
   end
 
-
   def start(userid, tweets, mentions, followers, feed) do
     state = {userid, tweets, mentions, followers, feed}
     {:ok, pid} = GenServer.start(__MODULE__, state)
@@ -98,6 +97,12 @@ defmodule Project41.LoginEngine do
     else
       {:loginUnsucessful, username}
     end
+
+  end
+
+
+  def logout(userid) do
+    Project41.LiveUserServer.userLogedOut(userid)
   end
 
   def isLogin?(username) do
