@@ -8,8 +8,8 @@ defmodule Project41.TweetEngine do
     {:ok, init_arg}
   end
 
-  def init(userid, tweets, mentions, followers, feed) do
-  {:ok, {userid, tweets, mentions, followers, feed}}
+  def init(userid, tweets, followers, feed) do
+    {:ok, {userid, tweets, followers, feed}}
   end
 
   def start(userid, tweets, followers, feed) do
@@ -27,7 +27,64 @@ defmodule Project41.TweetEngine do
     {:reply, state, state}
   end
 
-  def subscribe_to_user(userid, username) do
+  def subscribe_to_user(subscriber, user) do
+
+    userId = from(user in Project41.Userdata, select: user.userid, where: user.username==^user)
+              |> Project41.Repo.all
+
+    updateFollower(pid, subscriber)
 
   end
+
+  def addTweet(pid, tweet) do
+    GenServer.call(pid, {:addTweet, tweet})
+  end
+
+  def updateFeed(pid, tweet) do
+    GenServer.call(pid, {:updateFeed, tweet})
+  end
+
+  def updateFollower(pid, follower) do
+    GenServer.call(pid, {:updateFollower, follower})
+  end
+
+  def getFollowers(pid) do
+    {userid, tweets, followers, feed} = get_state(pid)
+    followers
+  end
+
+  def handle_call({:addTweet, tweet}, _from, state) do
+    {userid, tweets, followers, feed} = state
+
+    updatedTweets = tweets ++ [tweet]
+    updatedFeed = feed ++ [tweet]
+
+    state = {userid, updatedTweets, followers, updatedFeed}
+
+    IO.inspect(state)
+    {:reply, "Added New Tweet", state}
+  end
+
+  def handle_call({:updateFeed, tweet}, _from, state) do
+    {userid, tweets, followers, feed} = state
+
+    updatedFeed = feed ++ [tweet]
+
+    state = {userid, tweets, followers, updatedFeed}
+
+    IO.inspect(state)
+    {:reply, "Updated Feed", state}
+  end
+
+  def handle_call({:updateFollower, follower}, _from, state) do
+    {userid, tweets, followers, feed} = state
+
+    updatedFollower = followers ++ [follower]
+
+    state = {userid, tweets, updatedFollower, feed}
+
+    IO.inspect(state)
+    {:reply, "Updated Follower", state}
+  end
+
 end

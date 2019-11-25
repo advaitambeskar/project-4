@@ -23,7 +23,7 @@ defmodule Project41.TweetFacility do
     mention = Enum.filter(mention, fn x->
       x != nil
     end)
-
+#    IO.inspect(hashtag)
     [tweet, hashtag, mention]
   end
 
@@ -58,6 +58,53 @@ defmodule Project41.TweetFacility do
     # end
     query = from(user in Project41.Topic, select: user.tweet, where: user.hashtags==^hashtag)
     available_tweets = query |> Project41.Repo.all
-    IO.inspect(available_tweets)
+#    IO.inspect(available_tweets)
   end
+
+  def sendTweet(userName, tweet) do
+    processId = Project41.LiveUserServer.getLiveServerProcessId()    #get process id of live user server
+    liveUserMap =  Project41.LiveUserServer.get_state()                       #get map of live users from server
+    userID = getUserIDFromName(userName)
+
+    if Map.has_key?(liveUserMap, userID) do
+      userProcessId = Map.get(liveUserMap, userID)
+
+      [tweet, hashtag, mentions] = Project41.TweetFacility.tweetFormat(tweet)
+
+      Project41.TweetEngine.addTweet(userProcessId, tweet)
+
+      # update the feed of the mentioned users with the current tweet
+      updateUserFeed(mentions, liveUserMap, tweet)
+
+      followers = Project41.TweetEngine.getFollowers(userProcessId)
+
+      #update the feed of the followers with the current tweet
+      updateUserFeed(followers, liveUserMap, tweet)
+
+    else
+        IO.puts "Please log in first"
+    end
+  end
+
+  def getUserIDFromName(userName) do
+    userIDs = from(user in Project41.Userdata, select: user.userid, where: user.username==^userName)
+               |> Project41.Repo.all
+    if length(userIDs) > 0 do
+      [userID|tail] = userIDs
+      userID
+    else
+      nil
+    end
+  end
+
+  def updateUserFeed(users, liveUserMap, tweet) do
+    Enum.each(users, fn userName ->
+      userID = getUserIDFromName(userName)
+      pid = Map.get(liveUserMap, userID)
+      if pid != nil do
+        Project41.TweetEngine.updateFeed(pid, tweet)
+      end
+    end)
+  end
+
 end

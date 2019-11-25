@@ -27,6 +27,7 @@ defmodule Project41.LoginEngine do
       {:oldUser}
     end
   end
+
   def deleteUser(username, password) do
     #IO.inspect "WEA"
     {reply, userid} = username_exist(username)
