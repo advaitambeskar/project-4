@@ -10,10 +10,12 @@ defmodule Project41.Application do
       # Starts a worker by calling: Project41.Worker.start_link(arg)
       # {Project41.Worker, arg}
       Project41.Repo,
+      # Project41.LiveUserServer
       # Project41.TweetEngine
     ]
-    response = Project41.LiveUserServer.start_link()
+    {response, server_process_id} = Project41.LiveUserServer.start_link()
 #   Project41.LiveUserServer.userLogedIn(self(),456)
+    IO.inspect server_process_id
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Project41.Supervisor]

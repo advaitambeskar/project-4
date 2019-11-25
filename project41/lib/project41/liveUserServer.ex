@@ -22,19 +22,29 @@ defmodule Project41.LiveUserServer do
   def handle_call({:userLoggedIn, pid, userid}, _from, state) do
     map = state
     map = Map.put(map, userid, pid)
-    IO.inspect(map)
+    # IO.inspect(map)
     {:reply, "Updated live users", map}
   end
 
-  def userLogedOut(userid) do
+  def userLogOut(userid) do
     processID = Process.whereis(@processName)
     GenServer.call(processID, {:userLoggedOut, userid})
   end
 
   def handle_call({:userLoggedOut, userid}, _from, state) do
     map = state
-    Map.delete(map, userid)
+    # IO.inspect map
+    map = Map.delete(map, userid)
     {:reply, "Updating State", map}
+  end
+
+  def get_state() do
+    pid = Process.whereis(@processName)
+    GenServer.call(pid, :getState)
+  end
+
+  def handle_call(:getState, _from, state) do
+    {:reply, state, state}
   end
 end
 
