@@ -62,7 +62,6 @@ defmodule Project41.TweetFacility do
   end
 
   def sendTweet(userName, tweet) do
-    processId = Project41.LiveUserServer.getLiveServerProcessId()    #get process id of live user server
     liveUserMap =  Project41.LiveUserServer.get_state()                       #get map of live users from server
     userID = getUserIDFromName(userName)
 
