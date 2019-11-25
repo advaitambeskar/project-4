@@ -77,6 +77,6 @@ defmodule Project41.Feed do
   #
   schema "feed_database" do
     field :userid, :binary_id
-    field :tweets, {:map, :binary_id}
+    field :tweets, {:array, :binary_id}
   end
 end
