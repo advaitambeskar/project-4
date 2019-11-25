@@ -47,7 +47,7 @@ defmodule Project41.ClientFunctions do
         [feed] = from(user in Project41.Feed, select: user.tweets, where: user.userid==^userid) |> Project41.Repo.all
 
         {pid, client_state} = Project41.TweetEngine.start(userid, tweets, followers, feed)
-        Project41.LiveUserServer.userLogedIn(pid, userid)
+        Project41.LiveUserServer.userLogedIn(userid, pid)
 
         "Login as #{username} was successful"
       login_reply == :loginUnsucessful ->

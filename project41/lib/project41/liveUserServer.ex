@@ -13,16 +13,15 @@ defmodule Project41.LiveUserServer do
     {:ok, init_arg}
   end
 
-  def userLogedIn(pid, userid) do
+  def userLogedIn(userid, pid) do
     processID = Process.whereis(@processName)
-    GenServer.call(processID, {:userLoggedIn, pid, userid})
-
+    GenServer.call(processID, {:userLoggedIn, userid, pid})
   end
 
-  def handle_call({:userLoggedIn, pid, userid}, _from, state) do
+  def handle_call({:userLoggedIn, userid, pid}, _from, state) do
     map = state
     map = Map.put(map, userid, pid)
-    # IO.inspect(map)
+     IO.inspect(map)
     {:reply, "Updated live users", map}
   end
 
@@ -46,5 +45,10 @@ defmodule Project41.LiveUserServer do
   def handle_call(:getState, _from, state) do
     {:reply, state, state}
   end
+
+  def getLiveServerProcessId() do
+    processID = Process.whereis(@processName)
+  end
+
 end
 
