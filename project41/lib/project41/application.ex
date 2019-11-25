@@ -10,8 +10,6 @@ defmodule Project41.Application do
       # Starts a worker by calling: Project41.Worker.start_link(arg)
       # {Project41.Worker, arg}
       Project41.Repo,
-      # Project41.LiveUserServer
-      # Project41.TweetEngine
     ]
     {response, server_process_id} = Project41.LiveUserServer.start_link()
 #   Project41.LiveUserServer.userLogedIn(self(),456)
