@@ -1,3 +1,4 @@
+
 defmodule Project41.TweetEngine do
   use GenServer
   # Each username is associated with its corresponding userID, which becomes the foreign keys for the rest of the
@@ -22,18 +23,15 @@ defmodule Project41.TweetEngine do
     GenServer.call(pid, :getState)
   end
 
-  # Handle calls and casts for the engine
-  def handle_call(:getState, _from, state) do
-    {:reply, state, state}
-  end
 
-  def subscribe_to_user(subscriber, user) do
+  def subscribe_to_user(subscriber, username) do
 
-    userId = from(user in Project41.Userdata, select: user.userid, where: user.username==^user)
-              |> Project41.Repo.all
+    userID = Project41.TweetFacility.getUserIDFromName(username)
+    liveUserMap =  Project41.LiveUserServer.get_state()
 
-    updateFollower(pid, subscriber)
+    userProcessId = Map.get(liveUserMap, userID)
 
+    updateFollower(userProcessId, subscriber)
   end
 
   def addTweet(pid, tweet) do
@@ -51,6 +49,11 @@ defmodule Project41.TweetEngine do
   def getFollowers(pid) do
     {userid, tweets, followers, feed} = get_state(pid)
     followers
+  end
+
+  # Handle calls and casts for the engine
+  def handle_call(:getState, _from, state) do
+    {:reply, state, state}
   end
 
   def handle_call({:addTweet, tweet}, _from, state) do
