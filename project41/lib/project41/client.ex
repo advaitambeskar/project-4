@@ -2,20 +2,12 @@ defmodule Project41.Client do
   import Ecto.Query
 
   def main() do
-    Project41.ClientFunctions.register("ad_ambeskar", "advait")
-    Project41.ClientFunctions.login("adv_ambeskar", "advait")
-    Project41.ClientFunctions.login("adambeskar", "advaait")
-    Project41.ClientFunctions.login("advaitambeskar", "advait")
-    Project41.ClientFunctions.login("advaitvambeskar", "advait")
-    Project41.ClientFunctions.login("aambeskar", "advait")
-    Project41.ClientFunctions.login("adambeskar", "advait")
-    Project41.ClientFunctions.login("m", "m")
-    Project41.ClientFunctions.login("e", "e")
-    Project41.ClientFunctions.logout("adambeskar")
     Project41.ClientFunctions.register("msa", "msa")
-    Project41.ClientFunctions.logout("msasds")
+    Project41.ClientFunctions.logout("msa")
     Project41.ClientFunctions.login("msa", "msa")
+    Project41.ClientFunctions.logout("msa")
     Project41.ClientFunctions.delete("msa", "msa")
+    Project41.ClientFunctions.logout("msa")
     Project41.ClientFunctions.login("advaitambeskar", "advait")
     Project41.ClientFunctions.login("msa", "msa")
     Project41.ClientFunctions.delete("msa", "msa")
@@ -57,11 +49,11 @@ defmodule Project41.ClientFunctions do
         {pid, client_state} = Project41.TweetEngine.start(userid, tweets, followers, feed)
         Project41.LiveUserServer.userLogedIn(pid, userid)
 
-        IO.inspect "Login as #{username} was successful"
+        "Login as #{username} was successful"
       login_reply == :loginUnsucessful ->
-        IO.inspect "Sorry, the attempt to login to #{useriden} was unsuccessful"
+        "Sorry, the attempt to login to #{useriden} was unsuccessful"
       login_reply == :duplicateLogin ->
-        IO.inspect "Previous signing in detected. You are already logged in as #{useriden}."
+        "Previous sign in detected. You are already logged in as #{useriden}."
       true ->
         IO.inspect "Unexpected error during output. Please check the logs."
     end
@@ -73,5 +65,9 @@ defmodule Project41.ClientFunctions do
 
   def delete(username, password) do
     IO.inspect Project41.LoginEngine.deleteUser(username, password)
+  end
+
+  def subscribeToUser(username) do
+
   end
 end
