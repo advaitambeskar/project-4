@@ -27,11 +27,12 @@ defmodule Project41.TweetEngine do
   def subscribe_to_user(subscriber, username) do
 
     userID = Project41.TweetFacility.getUserIDFromName(username)
+    subscriberId = Project41.TweetFacility.getUserIDFromName(subscriber)
     liveUserMap =  Project41.LiveUserServer.get_state()
 
     userProcessId = Map.get(liveUserMap, userID)
 
-    updateFollower(userProcessId, subscriber)
+    updateFollower(userProcessId, subscriberId)
   end
 
   def addTweet(pid, tweet) do
@@ -72,6 +73,7 @@ defmodule Project41.TweetEngine do
     {userid, tweets, followers, feed} = state
 
     updatedFeed = feed ++ [tweet]
+    updatedFeed = Enum.uniq(updatedFeed)
 
     state = {userid, tweets, followers, updatedFeed}
 

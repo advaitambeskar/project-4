@@ -37,14 +37,22 @@ defmodule Project41.TweetFacility do
     #   field :mentions, {:map, :binary_id}
     # end
     #
+#    IO.inspect userid
     [tweet, hashtag, mention] = Project41.TweetFacility.tweetFormat(tweet)
     # query = from(user in Project41.Tweetdata, select: user.password, where: user.username==^username)
-    newTweet = %Project41.Tweetdata{tweetid: Ecto.UUID.generate(),
-    tweet: tweet, owner: userid, hashtags: hashtag, mentions: mention}
+    mentionids = Enum.map(mention, fn x ->
+      q = from(user in Project41.Userdata, select: user.userid, where: user.username==^x)
+      [answer] = q |> Project41.Repo.all
+      answer
+    end)
+    #IO.inspect mentionids
+    id = Ecto.UUID.generate()
+    newTweet = %Project41.Tweetdata{tweetid: id,
+    tweet: tweet, owner: userid, hashtags: hashtag, mentions: mentionids}
     Project41.Repo.insert(newTweet)
 
     # When a tweet is added, one must also add the tweet to respective hashtags
-
+    {id}
     # When a tweet is added, one must also add the tweet to the feed of the mentioned userids
   end
 
@@ -69,20 +77,54 @@ defmodule Project41.TweetFacility do
       userProcessId = Map.get(liveUserMap, userID)
 
       [tweet, hashtag, mentions] = Project41.TweetFacility.tweetFormat(tweet)
-
-      Project41.TweetEngine.addTweet(userProcessId, tweet)
+      {tweetid} = Project41.TweetFacility.addTweetToDB(userID, tweet)
+      IO.puts "tweetid"
+      IO.inspect(tweetid)
+      Project41.TweetEngine.addTweet(userProcessId, tweetid)
 
       # update the feed of the mentioned users with the current tweet
-      updateUserFeed(mentions, liveUserMap, tweet)
+      updateUserFeed(mentions, liveUserMap, tweetid)
 
       followers = Project41.TweetEngine.getFollowers(userProcessId)
-
+      follower_name = Enum.map(followers, fn x ->
+        q = from( user in Project41.Userdata, select: user.username, where: user.userid== ^x)
+        [answer] = q |> Project41.Repo.all
+        answer
+      end)
       #update the feed of the followers with the current tweet
-      updateUserFeed(followers, liveUserMap, tweet)
+      updateUserFeed(follower_name, liveUserMap, tweetid)
 
-    else
-        IO.puts "Please log in first"
+#      if response == nil do
+#        changeset = Project41.Feed.changeset(response, tweetid)
+#      else
+#        response = response ++ tweetid
+#        Project41.Repo.update(response)
+#      end
+
+      # Project41.TweetFacility.updateFeed(userID, response)
+      else
+      IO.puts "Please log in first"
     end
+  end
+
+  @spec updateFeed(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  def updateFeed(response = changeset) do
+    changeset
+  end
+
+  def reTweet(userName, tweetid) do
+    [tweet] = from(user in Project41.Tweetdata, select: user.tweet, where: user.tweetid==^tweetid)
+                      |> Project41.Repo.all
+    [tweetOwner] = from(user in Project41.Tweetdata, select: user.owner, where: user.tweetid==^tweetid)
+                 |> Project41.Repo.all
+    [ownerName] = from(user in Project41.Userdata, select: user.username, where: user.userid==^tweetOwner)
+                  |> Project41.Repo.all
+    prefix = "re-tweet by #{ownerName} -> "
+    retweet = prefix <> tweet
+#    IO.puts "retweeted"
+#    IO.inspect(retweet)
+    sendTweet(userName, retweet)
+
   end
 
   def getUserIDFromName(userName) do
@@ -102,7 +144,9 @@ defmodule Project41.TweetFacility do
       pid = Map.get(liveUserMap, userID)
       if pid != nil do
         Project41.TweetEngine.updateFeed(pid, tweet)
+
       end
+
     end)
   end
 

@@ -16,7 +16,7 @@ defmodule Project41.LoginEngine do
     if(!reply) do
       Project41.Repo.insert(newUser)
       #topicEntry
-      followerEntry = %Project41.Follower{userid: userid, followers: [userid]}
+      followerEntry = %Project41.Follower{userid: userid, followers: []}
       Project41.Repo.insert!(followerEntry)
       #feedDatabase
       feedEntry = %Project41.Feed{userid: userid, tweets: []}
