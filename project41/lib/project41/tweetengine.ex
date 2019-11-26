@@ -23,16 +23,39 @@ defmodule Project41.TweetEngine do
     GenServer.call(pid, :getState)
   end
 
-
+# username and subscriber need to be valid username
+# subscriber needs to be logged in
+# user and subscriber cant be null or empty strings
+# User cannot follow self
+# User cannot re subscribe someone
   def subscribe_to_user(subscriber, username) do
+    if (Project41.LoginEngine.isUserNameValid(username) == false or username == nil or username == "") do
+      IO.puts "the user you are trying to subscribe doesn't exist"
+    else
+      if (Project41.LoginEngine.isUserNameValid(subscriber) == false or Project41.LoginEngine.isLogin?(subscriber) == false or username == nil or username == "") do
+        IO.puts "Please login first"
+      else
+        userID = Project41.TweetFacility.getUserIDFromName(username)
+        liveUserMap =  Project41.LiveUserServer.get_state()
+        pid = Map.get(liveUserMap, userID)
+       {id, tweets, followers, feed} = :sys.get_state(pid)
+       if ( Enum.member?(followers, Project41.TweetFacility.getUserIDFromName(subscriber)) )do
+         IO.puts "Already following"
+         else
+           if(username == subscriber) do
+             IO.puts "cannot follow self"
+             else
+             userID = Project41.TweetFacility.getUserIDFromName(username)
+             subscriberId = Project41.TweetFacility.getUserIDFromName(subscriber)
+             liveUserMap =  Project41.LiveUserServer.get_state()
 
-    userID = Project41.TweetFacility.getUserIDFromName(username)
-    subscriberId = Project41.TweetFacility.getUserIDFromName(subscriber)
-    liveUserMap =  Project41.LiveUserServer.get_state()
+             userProcessId = Map.get(liveUserMap, userID)
 
-    userProcessId = Map.get(liveUserMap, userID)
-
-    updateFollower(userProcessId, subscriberId)
+             updateFollower(userProcessId, subscriberId)
+           end
+       end
+      end
+    end
   end
 
   def addTweet(pid, tweet) do
