@@ -31,6 +31,7 @@ defmodule Project41.ClientFunctions do
         reply == :oldUser ->
           IO.inspect "User #{username} is an old user. Attempting login instead."
           Project41.ClientFunctions.login(username, password)
+
     end
   end
 
