@@ -66,6 +66,16 @@ defmodule Project41.LoginEngine do
     end
   end
 
+  def isUserNameValid(username) do
+    userid = from(user in Project41.Userdata, select: user.userid, where: user.username==^username) |> Project41.Repo.all
+    #IO.inspect userid
+    if(userid == []) do
+      false
+    else
+      true
+    end
+  end
+
 
   def login(username, password) do
     retrieved_password = from(user in Project41.Userdata, select: user.password, where: user.username==^username) |> Project41.Repo.all
@@ -112,7 +122,6 @@ defmodule Project41.LoginEngine do
     [user_id] = retrieved_userid
 
     logged_in_Users = Project41.LiveUserServer.get_state()
-
     if(Map.has_key?(logged_in_Users, user_id)) do
       true
     else
