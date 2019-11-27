@@ -30,30 +30,32 @@ defmodule Project41.TweetEngine do
 # User cannot re subscribe someone
   def subscribe_to_user(subscriber, username) do
     if (Project41.LoginEngine.isUserNameValid(username) == false or username == nil or username == "") do
-      IO.puts "the user you are trying to subscribe doesn't exist"
+      "The user @#{username} you are trying to follow does not exist."
     else
       if (Project41.LoginEngine.isUserNameValid(subscriber) == false or Project41.LoginEngine.isLogin?(subscriber) == false or username == nil or username == "") do
-        IO.puts "Please login first"
+        "Login token may have expired. You need to login before you follow."
       else
         userID = Project41.TweetFacility.getUserIDFromName(username)
         liveUserMap =  Project41.LiveUserServer.get_state()
         pid = Map.get(liveUserMap, userID)
-       {id, tweets, followers, feed} = :sys.get_state(pid)
-       if ( Enum.member?(followers, Project41.TweetFacility.getUserIDFromName(subscriber)) )do
-         IO.puts "Already following"
-         else
-           if(username == subscriber) do
-             IO.puts "cannot follow self"
-             else
-             userID = Project41.TweetFacility.getUserIDFromName(username)
-             subscriberId = Project41.TweetFacility.getUserIDFromName(subscriber)
-             liveUserMap =  Project41.LiveUserServer.get_state()
+        {id, tweets, followers, feed} = :sys.get_state(pid)
+        if ( Enum.member?(followers, Project41.TweetFacility.getUserIDFromName(subscriber)) )do
+          "You already follow @#{username}"
+          else
+            if(username == subscriber) do
+              "You cannot follow your own self."
+              else
+              userID = Project41.TweetFacility.getUserIDFromName(username)
+              subscriberId = Project41.TweetFacility.getUserIDFromName(subscriber)
+              liveUserMap =  Project41.LiveUserServer.get_state()
 
-             userProcessId = Map.get(liveUserMap, userID)
+              userProcessId = Map.get(liveUserMap, userID)
 
-             updateFollower(userProcessId, subscriberId)
-           end
-       end
+              Project41.TweetEngine.updateFollower(userProcessId, subscriberId)
+              Project41.DatabaseFunction.addFollowerToDatabase(subscriber, username)
+              "@#{subscriber} has successfully begun following @#{username}"
+            end
+        end
       end
     end
   end

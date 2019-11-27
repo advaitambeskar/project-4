@@ -39,8 +39,79 @@ defmodule Project41.TweetFacility do
     # end
     query = from(user in Project41.Topic, select: user.tweet, where: user.hashtags==^hashtag)
     available_tweets = query |> Project41.Repo.all
-    available_tweets
-#    IO.inspect(available_tweets)
+    count = 0;
+    response = if(available_tweets == []) do
+      []
+    else
+      # IO.inspect "what"
+      # IO.inspect(available_tweets)
+      [tweet_list] = available_tweets
+      tweet_list
+    end
+    IO.inspect "The following tweets have been published for ##{hashtag} in the lifetime"
+    Enum.each(response, fn tweet_id ->
+      [tweet_string] = from(user in Project41.Tweetdata, select: user.tweet, where: user.tweetid==^tweet_id)
+      |> Project41.Repo.all
+      [tweet_owner] = from(user in Project41.Tweetdata, select: user.owner, where: user.tweetid==^tweet_id)
+      |> Project41.Repo.all
+      tweet_owner_name = from(user in Project41.Userdata, select: user.username, where: user.userid==^tweet_owner)
+      |> Project41.Repo.all
+
+      newTweetFormat = "@#{tweet_owner_name} tweeted '#{tweet_string}'"
+      IO.puts newTweetFormat
+    end)
+    if(Enum.count(response) != 0) do
+      "These are all the tweets published on ##{hashtag}"
+    else
+      "There are no tweets published on ##{hashtag} yet"
+    end
+  end
+
+  def userSearchQuery(user) do
+
+    # @primary_key {:hashid, :binary_id, autogenerate: true}
+    # schema "topic_database" do
+    #   field :hashtags, :string
+    #   field :userids, {:array, :binary_id}
+    #   field :tweet, {:array, :binary_id}
+    # end
+    userid = from(user in Project41.Userdata, select: user.userid, where: user.username==^user)
+    |> Project41.Repo.all
+
+    response = if(userid == []) do
+      []
+    else
+      # IO.inspect "what"
+      # IO.inspect(available_tweets)
+      [user_id] = userid
+      tweet_list = from(user in Project41.Tweetdata, select: user.tweetid, where: user.owner==^user_id)
+      |> Project41.Repo.all
+      tweet_list
+    end
+    #IO.inspect response
+    if(response != []) do
+      IO.inspect "The following tweets have been published for @#{user} in the lifetime"
+      Enum.each(response, fn tweet_id ->
+        [tweet_string] = from(user in Project41.Tweetdata, select: user.tweet, where: user.tweetid==^tweet_id)
+        |> Project41.Repo.all
+        [tweet_owner] = from(user in Project41.Tweetdata, select: user.owner, where: user.tweetid==^tweet_id)
+        |> Project41.Repo.all
+        tweet_owner_name = from(user in Project41.Userdata, select: user.username, where: user.userid==^tweet_owner)
+        |> Project41.Repo.all
+
+        newTweetFormat = "@#{tweet_owner_name} tweeted '#{tweet_string}'"
+        IO.puts newTweetFormat
+      end)
+      if(Enum.count(response) == 0) do
+        IO.puts "\n"
+        "There are no associated tweets by @#{user}"
+      else
+        IO.puts "\n"
+        "These are all the tweets published on @#{user}"
+      end
+    else
+      "No user associated with #{user}"
+    end
   end
 
   def sendTweet(userName, tweet) do
@@ -93,8 +164,7 @@ defmodule Project41.TweetFacility do
                   |> Project41.Repo.all
     prefix = "re-tweet by #{ownerName} -> "
     retweet = prefix <> tweet
-#    IO.puts "retweeted"
-#    IO.inspect(retweet)
+
     sendTweet(userName, retweet)
 
   end

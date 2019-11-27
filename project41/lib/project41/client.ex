@@ -68,7 +68,7 @@ defmodule Project41.ClientFunctions do
     IO.inspect Project41.LoginEngine.deleteUser(username, password)
   end
 
-  def subscribeToUser(username) do
-
+  def subscribeToUser(subscriber, username) do
+    IO.inspect Project41.TweetEngine.subscribe_to_user(subscriber, username)
   end
 end
