@@ -15,13 +15,16 @@ defmodule Project41.LoginEngine do
     {reply, answer} = Project41.LoginEngine.username_exist(username)
     if(!reply) do
       Project41.Repo.insert(newUser)
-      #topicEntry
+
+      # Follower Database Entry
       followerEntry = %Project41.Follower{userid: userid, followers: []}
       Project41.Repo.insert!(followerEntry)
-      #feedDatabase
-      feedEntry = %Project41.Feed{userid: userid, tweets: []}
-      Project41.Repo.insert!(feedEntry)
-      #create a process here with the created new user.
+
+      # Feed Database Entry
+      feedEntry = %Project41.Feed{}
+      changeset = Project41.Feed.changeset(feedEntry, %{userid: userid, tweets: []})
+      Project41.Repo.insert!(changeset)
+
       {:newUser}
     else
       {:oldUser}
