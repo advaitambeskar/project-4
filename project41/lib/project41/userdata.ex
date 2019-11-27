@@ -30,6 +30,11 @@ defmodule Project41.Topic do
     field :userids, {:array, :binary_id}
     field :tweet, {:array, :binary_id}
   end
+
+  def changeset(user, params \\ %{}) do
+    user
+    |> Ecto.Changeset.cast(params, [:hashid, :hashtags, :userids, :tweet])
+  end
 end
 
 defmodule Project41.Tweetdata do
@@ -48,7 +53,7 @@ defmodule Project41.Tweetdata do
   schema "tweet_database" do
     field :tweet, :string
     field :owner, :binary_id
-    field :hashtags, {:array, :string}
+    field :hashtags, {:array, :binary_id}
     field :mentions, {:array, :binary_id}
   end
 end
@@ -65,6 +70,11 @@ defmodule Project41.Follower do
       field :userid, :binary_id
       field :followers, {:array, :binary_id}
     end
+
+    def changeset(user, params \\ %{}) do
+      user
+      |> Ecto.Changeset.cast(params, [:userid, :followers])
+    end
 end
 
 defmodule Project41.Feed do
@@ -77,6 +87,11 @@ defmodule Project41.Feed do
   #
   schema "feed_database" do
     field :userid, :binary_id
-    field :tweets, {:array, :binary_id}
+    field :tweets, {:array, :string}
+  end
+
+  def changeset(user, params \\ %{}) do
+    user
+    |> Ecto.Changeset.cast(params, [:userid, :tweets])
   end
 end

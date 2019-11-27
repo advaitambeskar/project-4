@@ -71,7 +71,7 @@ defmodule Project41.TweetEngine do
   end
 
   def getFollowers(pid) do
-    {userid, tweets, followers, feed} = get_state(pid)
+    {_userid, _tweets, followers, _feed} = get_state(pid)
     followers
   end
 
@@ -88,7 +88,7 @@ defmodule Project41.TweetEngine do
 
     state = {userid, updatedTweets, followers, updatedFeed}
 
-    IO.inspect(state)
+    #IO.inspect(state)
     {:reply, "Added New Tweet", state}
   end
 
@@ -100,7 +100,7 @@ defmodule Project41.TweetEngine do
 
     state = {userid, tweets, followers, updatedFeed}
 
-    IO.inspect(state)
+    #IO.inspect(state)
     {:reply, "Updated Feed", state}
   end
 
@@ -111,7 +111,7 @@ defmodule Project41.TweetEngine do
 
     state = {userid, tweets, updatedFollower, feed}
 
-    IO.inspect(state)
+    #IO.inspect(state)
     {:reply, "Updated Follower", state}
   end
 
