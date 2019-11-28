@@ -79,4 +79,7 @@ defmodule Project41.ClientFunctions do
   def retweet(user, tweetid) do
     Project41.TweetFacility.reTweet(user, tweetid)
   end
+
+  # mentions and hashtag querying and user querying can occur only if the user is logged in. Login check
+  # is needed to be done/ performed
 end
