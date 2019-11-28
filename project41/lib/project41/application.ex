@@ -6,39 +6,36 @@ defmodule Project41.Application do
   use Application
 
   def start(_type, _args) do
-    children = [
-      # Starts a worker by calling: Project41.Worker.start_link(arg)
-      # {Project41.Worker, arg}
+    env = Mix.env()
 
-#      {Project41.Demo, System.argv}
-    ]
+    if env == :dev do
+      children = [
+        # Starts a worker by calling: Project41.Worker.start_link(arg)
+        # {Project41.Worker, arg}
+        Project41.Repo,
+        {Project41.LiveUserServer, %{}},
+        {Project41.Demo, System.argv}
+      ]
 
-    Project41.Repo.start_link()
-    Project41.LiveUserServer.start_link()
+      opts = [strategy: :one_for_one, name: Project41.Supervisor]
 
-    start_program(System.argv)
+      response = Supervisor.start_link(children, opts)
 
-    opts = [strategy: :one_for_one, name: Project41.Supervisor]
+      GenServer.call(Project41.Demo, :start)
 
-    Supervisor.start_link(children, opts)
+      IO.puts("Demo finished...")
+      response
+    else
+      children = [
+        # Starts a worker by calling: Project41.Worker.start_link(arg)
+        # {Project41.Worker, arg}
+        Project41.Repo,
+        {Project41.LiveUserServer, %{}}
+      ]
 
-    receiver()
-  end
+      opts = [strategy: :one_for_one, name: Project41.Supervisor]
 
-  def receiver() do
-    receiver()
-  end
-  def start_program(args) do
-      cond do
-        length(args) == 2->
-          [numberOfUsers, numberOfTweets] = args
-          users = String.to_integer(numberOfUsers)
-          tweets = String.to_integer(numberOfTweets)
-
-          Project41.Demo.initiate(users, tweets)
-        true ->
-          IO.puts("The number of arguments is invalid")
-          System.halt(0)
-      end
+      Supervisor.start_link(children, opts)
+    end
   end
 end
