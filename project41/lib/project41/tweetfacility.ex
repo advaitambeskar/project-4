@@ -156,16 +156,32 @@ defmodule Project41.TweetFacility do
 
 
   def reTweet(userName, tweetid) do
-    [tweet] = from(user in Project41.Tweetdata, select: user.tweet, where: user.tweetid==^tweetid)
+    tweets = from(user in Project41.Tweetdata, select: user.tweet, where: user.tweetid==^tweetid)
                       |> Project41.Repo.all
-    [tweetOwner] = from(user in Project41.Tweetdata, select: user.owner, where: user.tweetid==^tweetid)
+    if(tweets == []) do
+      "The tweet does not exist."
+    else
+      [tweet] = tweets
+      tweetOwners = from(user in Project41.Tweetdata, select: user.owner, where: user.tweetid==^tweetid)
                  |> Project41.Repo.all
-    [ownerName] = from(user in Project41.Userdata, select: user.username, where: user.userid==^tweetOwner)
+      if(tweetOwners == []) do
+      else
+        [tweetOwner] = tweetOwners
+        ownerNames = from(user in Project41.Userdata, select: user.username, where: user.userid==^tweetOwner)
                   |> Project41.Repo.all
-    prefix = "re-tweet by #{ownerName} -> "
-    retweet = prefix <> tweet
+        if(ownerNames == []) do
+          "The owner name does not exist"
+        else
+          [ownerName] = ownerNames
+          prefix = "Retweet by @#{userName} -> "
+          retweet = prefix <> tweet
+          sendTweet(userName, retweet)
+          "#{retweet}"
+        end
 
-    sendTweet(userName, retweet)
+      end
+    end
+
 
   end
 
@@ -184,9 +200,6 @@ defmodule Project41.TweetFacility do
     Enum.each(users, fn userName ->
       userID = getUserIDFromName(userName)
       pid = Map.get(liveUserMap, userID)
-#      IO.inspect "in update user feed"
-#      IO.inspect tweet
-#      IO.inspect userID
       if pid != nil do
         Project41.TweetEngine.updateFeed(pid, tweet)
         Project41.DatabaseFunction.addToFeed(userID, tweet)

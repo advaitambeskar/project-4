@@ -71,4 +71,15 @@ defmodule Project41.ClientFunctions do
   def subscribeToUser(subscriber, username) do
     IO.puts Project41.TweetEngine.subscribe_to_user(subscriber, username)
   end
+
+  def tweet(user, tweet) do
+    Project41.TweetFacility.sendTweet(user, tweet)
+  end
+
+  def retweet(user, tweetid) do
+    Project41.TweetFacility.reTweet(user, tweetid)
+  end
+
+  # mentions and hashtag querying and user querying can occur only if the user is logged in. Login check
+  # is needed to be done/ performed
 end
