@@ -184,9 +184,9 @@ defmodule Project41.TweetFacility do
     Enum.each(users, fn userName ->
       userID = getUserIDFromName(userName)
       pid = Map.get(liveUserMap, userID)
-      IO.inspect "in update user feed"
-      IO.inspect tweet
-      IO.inspect userID
+#      IO.inspect "in update user feed"
+#      IO.inspect tweet
+#      IO.inspect userID
       if pid != nil do
         Project41.TweetEngine.updateFeed(pid, tweet)
         Project41.DatabaseFunction.addToFeed(userID, tweet)
