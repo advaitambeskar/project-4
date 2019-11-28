@@ -147,7 +147,7 @@ defmodule Project41.TweetFacility do
       # Updating the Feed Database
       Project41.DatabaseFunction.addToFeed(userID, tweetid)
       # Project41.Repo.update!(changeset)
-      IO.inspect "Tweet added to feed"
+      #IO.inspect "Tweet added to feed"
     else
         IO.puts "Please log in first"
     end
