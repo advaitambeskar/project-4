@@ -142,4 +142,53 @@ defmodule Project41.DatabaseFunction do
       changeset = Project41.Topic.changeset(struc, %{userids: response})
       Project41.Repo.update(changeset)
   end
+
+  def mentions(username) do
+    #return all the tweets which mention the userid
+    userid = from(user in Project41.Userdata, select: user.userid, where: user.username==^username)
+    |> Project41.Repo.all
+    if(userid == []) do
+      IO.inspect "The username does not exist/ has not been registered."
+    else
+      [id] = userid
+      all_tweet_entries = from(user in Project41.Tweetdata, select: user) |> Project41.Repo.all
+      #IO.inspect all_tweet_entries
+      possibleTweets = Enum.map(all_tweet_entries, fn each_entry ->
+        #IO.inspect each_entry.mentions
+        response = if(Enum.member?(each_entry.mentions, id)) do
+          each_entry.tweetid
+        else
+        end
+        # IO.inspect "HERE"
+        # IO.inspect response
+        # answer = Enum.each(each_entry.mentions, fn mentions ->
+        #   response = if(Enum.member?(mentions, id)) do
+        #     each_entry.tweetid
+        #   end
+        #   response
+        response
+        # end)
+      end)
+      possibleTweets = Enum.filter(possibleTweets, fn x ->
+        x != nil
+      end)
+      response = Enum.map(possibleTweets, fn tweet ->
+        m = from(user in Project41.Tweetdata, select: user.tweet, where: user.tweetid==^tweet)
+        |> Project41.Repo.all
+        m
+      end)
+      # IO.inspect "response"
+      # IO.inspect response
+      if(response == []) do
+        IO.inspect "No tweets mentioning @#{username} yet"
+      else
+        res = response
+        Enum.map(res, fn x ->
+          [tweet] = x
+          IO.inspect tweet
+        end)
+      end
+    end
+    "All tweets have been printed"
+  end
 end
