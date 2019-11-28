@@ -9,14 +9,36 @@ defmodule Project41.Application do
     children = [
       # Starts a worker by calling: Project41.Worker.start_link(arg)
       # {Project41.Worker, arg}
-      Project41.Repo,
+
+#      {Project41.Demo, System.argv}
     ]
-    {response, server_process_id} = Project41.LiveUserServer.start_link()
-#   Project41.LiveUserServer.userLogedIn(self(),456)
-    IO.inspect server_process_id
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
+
+    Project41.Repo.start_link()
+    Project41.LiveUserServer.start_link()
+
+    start_program(System.argv)
+
     opts = [strategy: :one_for_one, name: Project41.Supervisor]
+
     Supervisor.start_link(children, opts)
+
+    receiver()
+  end
+
+  def receiver() do
+    receiver()
+  end
+  def start_program(args) do
+      cond do
+        length(args) == 2->
+          [numberOfUsers, numberOfTweets] = args
+          users = String.to_integer(numberOfUsers)
+          tweets = String.to_integer(numberOfTweets)
+
+          Project41.Demo.initiate(users, tweets)
+        true ->
+          IO.puts("The number of arguments is invalid")
+          System.halt(0)
+      end
   end
 end

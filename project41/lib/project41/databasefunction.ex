@@ -99,10 +99,10 @@ defmodule Project41.DatabaseFunction do
   def addFollowerToDatabase(subscriber, username) do
     [userid] = from(user in Project41.Userdata, select: user.userid, where: user.username==^username)
     |> Project41.Repo.all
-    IO.inspect userid
+#    IO.inspect userid
     [subscriber_id] = from(user in Project41.Userdata, select: user.userid, where: user.username==^subscriber)
     |> Project41.Repo.all
-    IO.inspect subscriber_id
+#    IO.inspect subscriber_id
 
     [entry] = from(user in Project41.Follower, select: user, where: user.userid==^userid)
       |> Project41.Repo.all
@@ -114,7 +114,7 @@ defmodule Project41.DatabaseFunction do
       end
       response = response ++ [subscriber_id]
       response = Enum.uniq(response)
-      IO.inspect response
+#      IO.inspect response
       struc = Project41.Follower |> Ecto.Query.where(userid: ^userid) |> Project41.Repo.one
       changeset = Project41.Follower.changeset(struc, %{followers: response})
       Project41.Repo.update(changeset)
