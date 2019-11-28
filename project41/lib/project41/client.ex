@@ -71,4 +71,12 @@ defmodule Project41.ClientFunctions do
   def subscribeToUser(subscriber, username) do
     IO.inspect Project41.TweetEngine.subscribe_to_user(subscriber, username)
   end
+
+  def tweet(user, tweet) do
+    Project41.TweetFacility.sendTweet(user, tweet)
+  end
+
+  def retweet(user, tweetid) do
+    Project41.TweetFacility.reTweet(user, tweetid)
+  end
 end
