@@ -1,5 +1,7 @@
 
 defmodule Project41.TweetEngine do
+  import Ecto.Query
+
   use GenServer
   # Each username is associated with its corresponding userID, which becomes the foreign keys for the rest of the
   # stuff
@@ -84,8 +86,15 @@ defmodule Project41.TweetEngine do
 
   def handle_call({:addTweet, tweet}, _from, state) do
     {userid, tweets, followers, feed} = state
+    [userName] = from(user in Project41.Userdata, select: user.username, where: user.userid == ^userid)
+                 |> Project41.Repo.all
+    [tweetName] = from(user in Project41.Tweetdata, select: user.tweet, where: user.tweetid==^tweet)
+                     |> Project41.Repo.all
+
+    IO.puts "New tweet added to #{userName}'s feed : #{tweetName}"
 
     updatedTweets = tweets ++ [tweet]
+
     updatedFeed = feed ++ [tweet]
 
     state = {userid, updatedTweets, followers, updatedFeed}
@@ -95,12 +104,19 @@ defmodule Project41.TweetEngine do
   end
 
   def handle_call({:updateFeed, tweet}, _from, state) do
-    {userid, tweets, followers, feed} = state
+    { userID, tweets, followers, feed } = state
+
+    [userName] = from(user in Project41.Userdata, select: user.username, where: user.userid == ^userID)
+               |> Project41.Repo.all
+
+    [tweetName] = from(user in Project41.Tweetdata, select: user.tweet, where: user.tweetid==^tweet)
+                     |> Project41.Repo.all
+    IO.puts "New tweet added to #{userName}'s feed : #{tweetName}"
 
     updatedFeed = feed ++ [tweet]
     updatedFeed = Enum.uniq(updatedFeed)
 
-    state = {userid, tweets, followers, updatedFeed}
+    state = {userID, tweets, followers, updatedFeed}
 
     #IO.inspect(state)
     {:reply, "Updated Feed", state}
