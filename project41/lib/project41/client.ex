@@ -69,7 +69,7 @@ defmodule Project41.ClientFunctions do
   end
 
   def subscribeToUser(subscriber, username) do
-    IO.inspect Project41.TweetEngine.subscribe_to_user(subscriber, username)
+    IO.puts Project41.TweetEngine.subscribe_to_user(subscriber, username)
   end
 
   def tweet(user, tweet) do

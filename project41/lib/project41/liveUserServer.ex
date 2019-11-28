@@ -21,7 +21,7 @@ defmodule Project41.LiveUserServer do
   def handle_call({:userLoggedIn, userid, pid}, _from, state) do
     map = state
     map = Map.put(map, userid, pid)
-     IO.inspect(map)
+#     IO.inspect(map)
     {:reply, "Updated live users", map}
   end
 

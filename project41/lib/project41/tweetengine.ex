@@ -32,7 +32,7 @@ defmodule Project41.TweetEngine do
 # User cannot re subscribe someone
   def subscribe_to_user(subscriber, username) do
     if (Project41.LoginEngine.isUserNameValid(username) == false or username == nil or username == "") do
-      "The user @#{username} you are trying to follow does not exist."
+        "The user @#{username} you are trying to follow does not exist."
     else
       if (Project41.LoginEngine.isUserNameValid(subscriber) == false or Project41.LoginEngine.isLogin?(subscriber) == false or username == nil or username == "") do
         "Login token may have expired. You need to login before you follow."
@@ -42,7 +42,7 @@ defmodule Project41.TweetEngine do
         pid = Map.get(liveUserMap, userID)
         {id, tweets, followers, feed} = :sys.get_state(pid)
         if ( Enum.member?(followers, Project41.TweetFacility.getUserIDFromName(subscriber)) )do
-          "You already follow @#{username}"
+          "@#{subscriber} already follows @#{username}"
           else
             if(username == subscriber) do
               "You cannot follow your own self."
