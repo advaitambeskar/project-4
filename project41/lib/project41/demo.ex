@@ -68,7 +68,7 @@ defmodule Project41.Demo do
     end)
   end
 
-  def handle_call(:start, _from, args) do
+  def handle_cast(:start, args) do
 
     IO.puts("starting demo...")
 
@@ -84,12 +84,15 @@ defmodule Project41.Demo do
 
         send_tweets(users, tweets)
 
+        IO.puts("Demo finished...")
+
+        System.halt(0)
       true ->
         IO.puts("The number of arguments is invalid")
         System.halt(0)
     end
 
-    {:reply, "Demo finished", args}
+    {:noreply, args}
   end
 
 end

@@ -1,4 +1,4 @@
-defmodule Project41.Application do
+defmodule Project41.Proj4 do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -21,9 +21,9 @@ defmodule Project41.Application do
 
       response = Supervisor.start_link(children, opts)
 
-      GenServer.call(Project41.Demo, :start)
+      GenServer.cast(Project41.Demo, :start)
 
-      IO.puts("Demo finished...")
+      receiver()
       response
     else
       children = [
@@ -38,4 +38,9 @@ defmodule Project41.Application do
       Supervisor.start_link(children, opts)
     end
   end
+
+  def receiver() do
+    receiver()
+  end
+
 end
