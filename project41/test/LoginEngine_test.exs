@@ -7,21 +7,6 @@ defmodule LoginEngineTest do
     assert reply == :newUser || :oldUser
   end
 
-  test "test_delete_user" do
-    reply = Project41.LoginEngine.deleteUser("abcd", "pwd")
-    expected_reply = "You need to login before you delete the user."
-    assert reply != nil
-    assert reply == expected_reply
-
-    Project41.LoginEngine.registerUser("abcd", "pwd")
-    reply2 = Project41.LoginEngine.deleteUser("abcd", "pwd2")
-    expected_reply2 = "You need to login before you delete the user."
-
-    assert reply2 != nil
-    assert reply2 == expected_reply2
-
-  end
-
   test "test_username-exists" do
     Project41.LoginEngine.registerUser("hello", "pwd")
     {reply,_} = Project41.LoginEngine.username_exist("hello")
