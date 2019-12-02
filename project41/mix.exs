@@ -7,7 +7,16 @@ defmodule Project41.MixProject do
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+
+      # Docs
+      name: "Project4",
+      source_url: "https://github.com/advaitambeskar/project-4",
+      homepage_url: "https://github.com/advaitambeskar/project-4",
+      docs: [
+        main: "Project41",
+        extras: ["README.md"]
+      ]
     ]
   end
 
