@@ -13,14 +13,14 @@ defmodule Project41.ClientFunctions do
   Accepts a username and password combination with the pre-condition that the username does not
   already exist in the database. Saves the combination in the database so that the user can login
   anytime.
-  If successful login occurs, the username and password combination attempts to login
+  If successful registration occurs, the username and password combination attempts to login
   If the user already exists, then the username and password combination attempts to login
 
-  Returns `:ok`
+  Returns `Project41.ClientFunctions.login(username, password)`
 
   ## Examples
     iex> Project41.ClientFunctions.register("advait", "pwd")
-    :ok
+    "Login as advait was successful"
   """
   @doc since: "1.0.0"
   def register(username, password) do
@@ -33,9 +33,26 @@ defmodule Project41.ClientFunctions do
         IO.inspect "User #{username} is an old user. Attempting login instead."
         Project41.ClientFunctions.login(username, password)
     end
-    :ok
   end
 
+  @doc """
+  Allows a new client-user to login into the system.
+  Accepts a username and password combination to authenticate the login.
+
+  If successful login occurs, then the success message is returned
+  If the login is unsuccessful, then the failure message is returned
+  If a previous active login is already detected, then the corresponding message is returned.
+
+  Returns `Login as username was successful`
+  or `Sorry, the attempt to login to username was unsuccessful`
+  or `Previous sign in detected. You are already logged in as username.`
+  or `Unexpected error during output. Please check the logs.`
+
+  ## Examples
+    iex> Project41.ClientFunctions.login("advait", "pwd")
+    Login as advait was successful
+  """
+  @doc since: "1.0.0"
   def login(username, password) do
     {login_reply, useriden} = Project41.LoginEngine.login(username, password)
     #IO.inspect userid
@@ -53,20 +70,35 @@ defmodule Project41.ClientFunctions do
 
         "Login as #{username} was successful"
       login_reply == :loginUnsucessful ->
-        "Sorry, the attempt to login to #{useriden} was unsuccessful"
+        "Sorry, the attempt to login to #{username} was unsuccessful"
       login_reply == :duplicateLogin ->
-        "Previous sign in detected. You are already logged in as #{useriden}."
+        "Previous sign in detected. You are already logged in as #{username}."
       true ->
         IO.inspect "Unexpected error during output. Please check the logs."
     end
   end
 
+  @doc """
+  Allows the currently logged in user to log out of the system.
+
+  Returns: Project41.LoginEngine.logout(username)
+
+  Example:
+    iex> Project41.ClientFunctions.logout(advait)
+    "Successfully signed out advait of the app.
+  """
+  @doc since: "1.0.0"
   def logout(username) do
-    IO.inspect Project41.LoginEngine.logout(username)
+    Project41.LoginEngine.logout(username)
   end
 
+  @doc """
+  Allows the currently logged in user to log out of the system.
+
+  Returns Project41.LoginEngine.logout(username)
+  """
   def delete(username, password) do
-    IO.inspect Project41.LoginEngine.deleteUser(username, password)
+    Project41.LoginEngine.deleteUser(username, password)
   end
 
   def subscribeToUser(subscriber, username) do
