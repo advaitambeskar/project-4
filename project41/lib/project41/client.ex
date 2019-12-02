@@ -1,38 +1,39 @@
-defmodule Project41.Client do
-  import Ecto.Query
-
-  def main() do
-    Project41.ClientFunctions.register("msa", "msa")
-    Project41.ClientFunctions.logout("msa")
-    Project41.ClientFunctions.login("msa", "msa")
-    Project41.ClientFunctions.logout("msa")
-    Project41.ClientFunctions.delete("msa", "msa")
-    Project41.ClientFunctions.logout("msa")
-    Project41.ClientFunctions.login("advaitambeskar", "advait")
-    Project41.ClientFunctions.login("msa", "msa")
-    Project41.ClientFunctions.delete("msa", "msa")
-    :end
-  end
-end
-
 
 defmodule Project41.ClientFunctions do
   import Ecto.Query
   @moduledoc """
-  Create Endpoints of sorts for client functions so that they can be directly used.
-  Improved interface
+  This is the Project41.ClientFunctions module. The purpose of this module is to provide end points for the front-end to communicate with the server.
+  The module accumalates functions that enable the connected client-user to communicate and produce logical changes to the state of itself and the
+  client-users connected.
   """
+  @moduledoc since: "1.0.0"
+
+  @doc """
+  Allows a new client-user to register into the system.
+  Accepts a username and password combination with the pre-condition that the username does not
+  already exist in the database. Saves the combination in the database so that the user can login
+  anytime.
+  If successful login occurs, the username and password combination attempts to login
+  If the user already exists, then the username and password combination attempts to login
+
+  Returns `:ok`
+
+  ## Examples
+    iex> Project41.ClientFunctions.register("advait", "pwd")
+    :ok
+  """
+  @doc since: "1.0.0"
   def register(username, password) do
     {reply} = Project41.LoginEngine.registerUser(username, password)
     cond do
       reply == :newUser ->
         IO.inspect "Successfully registered #{username} as a new user."
         Project41.ClientFunctions.login(username, password)
-        reply == :oldUser ->
-          IO.inspect "User #{username} is an old user. Attempting login instead."
-          Project41.ClientFunctions.login(username, password)
-
+      reply == :oldUser ->
+        IO.inspect "User #{username} is an old user. Attempting login instead."
+        Project41.ClientFunctions.login(username, password)
     end
+    :ok
   end
 
   def login(username, password) do
