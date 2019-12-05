@@ -81,11 +81,13 @@ defmodule Project41.ClientFunctions do
   @doc """
   Allows the currently logged in user to log out of the system.
 
-  Returns: Project41.LoginEngine.logout(username)
+  Returns: `Project41.LoginEngine.logout/1`
 
-  Example:
+  Examples
+
     iex> Project41.ClientFunctions.logout(advait)
-    "Successfully signed out advait of the app.
+    "Successfully signed out advait of the app."
+
   """
   @doc since: "1.0.0"
   def logout(username) do
@@ -95,7 +97,7 @@ defmodule Project41.ClientFunctions do
   @doc """
   Allows the currently logged in user to log out of the system.
 
-  Returns Project41.LoginEngine.logout(username)
+  Returns `Project41.LoginEngine.delete/1`
   """
   def delete(username, password) do
     Project41.LoginEngine.deleteUser(username, password)
